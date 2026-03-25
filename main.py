@@ -6,6 +6,10 @@ from utils.conversor_dados import to_int, to_float
 
 app = FastAPI()
 
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
+
 def mapear_pagamento_csv(item):
     return {
         "id": to_int(item.get("id")),
