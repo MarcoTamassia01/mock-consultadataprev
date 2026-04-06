@@ -135,7 +135,7 @@ def get_emprestimo_trabalhador(
     situacao_por_contrato = {
         "3697": {"codigo": 7, "descricao": "Suspenso "},
         "3735": {"codigo": 7, "descricao": "Suspenso "},
-        "3743": {"codigo": 8, "descricao": "Suspenso Banco"},
+        "3743": {"codigo": 0, "descricao": "Ativo"},
         "4287": {"codigo": 8, "descricao": "Suspenso Banco"},
         "4341": {"codigo": 15, "descricao": "Encerrado por Temino de Vinculo"},
         "4358": {"codigo": 15, "descricao": "Encerrado por Temino de Vinculo"},
