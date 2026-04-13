@@ -1,14 +1,31 @@
 
-from fastapi import FastAPI, Query
+from fastapi import Body, FastAPI, Query
 from constants.utils_constants import QUANTIDADE_POR_PAGINA
 from utils.carregar_dados import carregar_dados_csv
 from utils.conversor_dados import to_int, to_float
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
+
+class ExcluirConsignadoRequest(BaseModel):
+    numeroInscricaoEmpregador: int = Field(..., ge=0)
+    cpfTrabalhador: int = Field(..., ge=0)
+    matricula: str
+    motivoExclusao: int
+    numeroContrato: str
+
+
+class ExcluirConsignadoResponse(BaseModel):
+    codigoSucesso: str
+    mensagem: str
+    numeroContrato: str
+    hashOperacao: int
+    competenciaExclusao: int
+
 
 def mapear_pagamento_csv(item):
     return {
@@ -216,4 +233,63 @@ def get_emprestimo_trabalhador(
         "pagamentos": [],
         "escrituracoes": [],
         "parcelasAntecipadas": [],
+    }
+
+
+@app.post("/v1/emprestimos/excluir-consignado-trabalhador", response_model=ExcluirConsignadoResponse)
+def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)):
+    contrato = str(payload.numeroContrato).strip()
+
+    # Mocks "diferentes" por contrato (mantendo o mesmo shape do response)
+    contratos_mock = [
+        "4377",
+        "3842",
+        "3845",
+        "3868",
+        "1",
+        "3500",
+        "3501",
+        "3502",
+        "3503",
+        "3529",
+        "3537",
+        "3515",
+        "3522",
+        "3514",
+        "14",
+        "3523",
+        "3527",
+    ]
+    contratos_set = set(contratos_mock)
+
+    base_hash = 71295845
+    contrato_num = to_int(contrato)
+    variacao = (contrato_num or sum(ord(c) for c in contrato)) % 97
+
+    # Variação de código/mensagem por contrato (determinística)
+    codigos = ["D12", "D13", "D14"]
+    codigo_sucesso = codigos[variacao % len(codigos)]
+    mensagens = {
+        "D12": "Exclusão registrada",
+        "D13": "Exclusão recebida para processamento",
+        "D14": "Exclusão registrada com ressalvas",
+    }
+    mensagem_base = mensagens[codigo_sucesso]
+
+    if contrato in contratos_set:
+        return {
+            "codigoSucesso": codigo_sucesso,
+            "mensagem": f"{mensagem_base} ({contrato})",
+            "numeroContrato": contrato,
+            "hashOperacao": base_hash + variacao,
+            "competenciaExclusao": 202600 + (variacao % 12) + 1,
+        }
+
+    # Fallback para qualquer outro contrato (ainda útil para testes)
+    return {
+        "codigoSucesso": codigo_sucesso,
+        "mensagem": mensagem_base,
+        "numeroContrato": contrato,
+        "hashOperacao": base_hash + variacao,
+        "competenciaExclusao": 202601,
     }
