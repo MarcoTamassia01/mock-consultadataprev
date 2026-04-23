@@ -169,6 +169,8 @@ def get_emprestimo_trabalhador(
         "84": {"codigo": 8, "descricao": "Suspenso Banco"},
         "99": {"codigo": 7, "descricao": "AFASTADO"},
         "30": {"codigo": 8, "descricao": "Suspenso Banco"},
+        "579": {"codigo": 7, "descricao": "Suspenso"},
+        "580": {"codigo": 15, "descricao": "Desligado"},
         "80": {"codigo": 15, "descricao": "Encerrado por Temino de Vinculo"},
         "82": {"codigo": 15, "descricao": "Encerrado por Temino de Vinculo"},
         "86": {"codigo": 7, "descricao": "AFASTADO"},
