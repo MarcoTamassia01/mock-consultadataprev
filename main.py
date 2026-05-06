@@ -243,7 +243,7 @@ def get_emprestimo_trabalhador(
     }
 
 
-@app.post("/v1/emprestimos/excluir-consignado-trabalhador", response_model=ExcluirConsignadoResponse)
+@app.put("/v1/emprestimos/excluir-consignado-trabalhador", response_model=ExcluirConsignadoResponse)
 def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)):
     contrato = str(payload.numeroContrato).strip()
 
