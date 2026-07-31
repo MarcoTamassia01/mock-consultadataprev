@@ -12,7 +12,7 @@ def ping():
     return {"status": "ok"}
 
 class ExcluirConsignadoRequest(BaseModel):
-    numeroInscricaoEmpregador: int = Field(..., ge=0)
+    numeroInscricaoEmpregador: str
     cpfTrabalhador: int = Field(..., ge=0)
     matricula: str
     motivoExclusao: int
