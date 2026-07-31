@@ -319,6 +319,11 @@ def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)
         "4374",
         "4377",
         "14",
+        "9",
+        "100008",
+        "902672",
+        "100024",
+        "100021",
     ]
     contratos_set = set(contratos_mock)
 
