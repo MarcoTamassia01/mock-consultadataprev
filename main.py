@@ -177,6 +177,7 @@ def get_emprestimo_trabalhador(
         "87": {"codigo": 8, "descricao": "AFASTADO"},
         "353": {"codigo": 15, "descricao": "Desligado"},
         "88": {"codigo": 15, "descricao": "Desligado"},
+        "96063137": {"codigo": 7, "descricao": "SUSPENSO"},
     }
     situacao_emprestimo = situacao_por_contrato.get(
         contrato, {"codigo": 0, "descricao": "Ativo"}
