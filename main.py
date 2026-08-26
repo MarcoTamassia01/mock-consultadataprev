@@ -146,6 +146,8 @@ def get_emprestimo_trabalhador(
         "87": _mock_for_contrato("87"),
         "353": _mock_for_contrato("353"),
         "88": _mock_for_contrato("88"),
+        "1379": _mock_for_contrato("1379"),
+        "1381": _mock_for_contrato("1381"),
     }
 
     dados = mocks_por_contrato.get(contrato, _mock_for_contrato(contrato))
@@ -178,6 +180,8 @@ def get_emprestimo_trabalhador(
         "353": {"codigo": 15, "descricao": "Desligado"},
         "88": {"codigo": 15, "descricao": "Desligado"},
         "96063137": {"codigo": 7, "descricao": "SUSPENSO"},
+        "1379": {"codigo": 15, "descricao": "DEMITIDO"},
+        "1381": {"codigo": 7, "descricao": "AFASTADO"},
     }
     situacao_emprestimo = situacao_por_contrato.get(
         contrato, {"codigo": 0, "descricao": "Ativo"}
