@@ -1,0 +1,36 @@
+MENSAGENS_ANTECIPACAO = {
+    "BC": "Requisição sem CBC ou CBC inválido",
+    "BD": "Operação realizada com sucesso",
+    "BF": "Exclusão realizada com sucesso",
+    "CA": "Código do Banco Inválido",
+    "FH": "Operação realizada fora do horário",
+    "HY": "Empréstimo inexistente",
+    "HZ": "Não é possível fazer a operação com o empréstimo nesta situação",
+    "NC": "A requisição está sem número de contrato",
+    "OG": "Registro sendo atualizado por outra operação",
+    "OH": "O número do contrato está inválido",
+    "OT": "O tamanho do(s) campo(s) está(ão) incorreto(s):",
+    "OZ": "Serviço Suspenso/Processamento da folha",
+    "UA": "Lista de competências inválida",
+    "UB": "A competência informada deve ser maior ou igual a competência atual",
+    "UC": "A competência informada já está suspensa por antecipação de parcela",
+}
+
+# Contratos repetidos na lista de entrada compartilham o mesmo cenário.
+CODIGOS_ANTECIPACAO_POR_CONTRATO = {
+    "6420": "UC",
+    "50017": "BD",
+    "100003": "BD",
+    "100013": "BD",
+    "100015": "BD",
+    "100017": "BD",
+    "100019": "BD",
+    "100020": "BD",
+    "100048": "BD",
+    "100050": "BD",
+    "100108": "BD",
+    "100110": "BD",
+    "100114": "BD",
+    "100141": "BD",
+    "100145": "BD",
+}

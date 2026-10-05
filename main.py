@@ -1,5 +1,10 @@
 
 from fastapi import Body, FastAPI, Query
+from fastapi.responses import JSONResponse
+from constants.antecipacao_constants import (
+    CODIGOS_ANTECIPACAO_POR_CONTRATO,
+    MENSAGENS_ANTECIPACAO,
+)
 from constants.utils_constants import QUANTIDADE_POR_PAGINA
 from utils.carregar_dados import carregar_dados_csv
 from utils.conversor_dados import to_int, to_float
@@ -25,6 +30,54 @@ class ExcluirConsignadoResponse(BaseModel):
     numeroContrato: str
     hashOperacao: int
     competenciaExclusao: int
+
+
+class AnteciparParcelaRequest(BaseModel):
+    codigoSolicitante: int
+    numeroContrato: str
+    listaCompetencias: list[str]
+
+
+class AnteciparParcelaResponse(BaseModel):
+    codigoSucesso: str
+    mensagem: str
+    codigoSolicitante: int
+    contrato: str
+
+
+class ErroAntecipacao(BaseModel):
+    codigo: str
+    mensagem: str
+
+
+class AnteciparParcelaErroResponse(BaseModel):
+    erros: list[ErroAntecipacao]
+
+
+@app.post(
+    "/emprestimos/antecipar-parcela",
+    response_model=AnteciparParcelaResponse,
+    responses={412: {"model": AnteciparParcelaErroResponse}},
+)
+def antecipar_parcela(payload: AnteciparParcelaRequest = Body(...)):
+    """Simula erro UC para 6420 e sucesso BD para os demais contratos."""
+    codigo = CODIGOS_ANTECIPACAO_POR_CONTRATO.get(
+        payload.numeroContrato.strip(), "BD"
+    )
+    mensagem = MENSAGENS_ANTECIPACAO[codigo]
+
+    if codigo not in ("BD", "BF"):
+        return JSONResponse(
+            status_code=412,
+            content={"erros": [{"codigo": codigo, "mensagem": mensagem}]},
+        )
+
+    return {
+        "codigoSucesso": codigo,
+        "mensagem": mensagem,
+        "codigoSolicitante": payload.codigoSolicitante,
+        "contrato": payload.numeroContrato,
+    }
 
 
 def mapear_pagamento_csv(item):
