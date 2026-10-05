@@ -11,7 +11,7 @@ Accept: application/json
 ###
 
 # Antecipação com sucesso: HTTP 200 / BD
-POST http://127.0.0.1:8000/emprestimos/antecipar-parcela
+POST http://127.0.0.1:8000/v1/emprestimos/antecipar-parcela
 Content-Type: application/json
 Accept: application/json
 
@@ -24,14 +24,14 @@ Accept: application/json
 ###
 
 # Antecipação com erro: HTTP 412 / UC
-POST http://127.0.0.1:8000/emprestimos/antecipar-parcela
+POST http://127.0.0.1:8000/v1/emprestimos/antecipar-parcela
 Content-Type: application/json
 Accept: application/json
 
 {
   "codigoSolicitante": 0,
   "numeroContrato": "6420",
-  "listaCompetencias": ["202501"]
+  "listaCompetencias": ["052024", "062024", "072024"]
 }
 
 ###

@@ -55,9 +55,15 @@ class AnteciparParcelaErroResponse(BaseModel):
 
 
 @app.post(
+    "/v1/emprestimos/antecipar-parcela",
+    response_model=AnteciparParcelaResponse,
+    responses={412: {"model": AnteciparParcelaErroResponse}},
+)
+@app.post(
     "/emprestimos/antecipar-parcela",
     response_model=AnteciparParcelaResponse,
     responses={412: {"model": AnteciparParcelaErroResponse}},
+    include_in_schema=False,
 )
 def antecipar_parcela(payload: AnteciparParcelaRequest = Body(...)):
     """Simula erro UC para 6420 e sucesso BD para os demais contratos."""
