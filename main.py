@@ -1,5 +1,5 @@
 
-from fastapi import Body, FastAPI, Query
+from fastapi import Body, FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 from constants.antecipacao_constants import (
     CODIGOS_ANTECIPACAO_POR_CONTRATO,
@@ -307,7 +307,11 @@ def get_emprestimo_trabalhador(
     }
 
 
-@app.put("/v1/emprestimos/excluir-consignado-trabalhador", response_model=ExcluirConsignadoResponse)
+@app.put(
+    "/v1/emprestimos/excluir-consignado-trabalhador",
+    response_model=ExcluirConsignadoResponse,
+    responses={404: {"description": "Empréstimo inexistente"}},
+)
 def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)):
     contrato = str(payload.numeroContrato).strip()
 
@@ -406,6 +410,9 @@ def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)
     ]
     contratos_set = set(contratos_mock)
 
+    if contrato not in contratos_set:
+        raise HTTPException(status_code=404, detail="Empréstimo inexistente")
+
     base_hash = 71295845
     contrato_num = to_int(contrato)
     variacao = (contrato_num or sum(ord(c) for c in contrato)) % 97
@@ -420,20 +427,10 @@ def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)
     }
     mensagem_base = mensagens[codigo_sucesso]
 
-    if contrato in contratos_set:
-        return {
-            "codigoSucesso": codigo_sucesso,
-            "mensagem": f"{mensagem_base} ({contrato})",
-            "numeroContrato": contrato,
-            "hashOperacao": base_hash + variacao,
-            "competenciaExclusao": 202600 + (variacao % 12) + 1,
-        }
-
-    # Fallback para qualquer outro contrato (ainda útil para testes)
     return {
         "codigoSucesso": codigo_sucesso,
-        "mensagem": mensagem_base,
+        "mensagem": f"{mensagem_base} ({contrato})",
         "numeroContrato": contrato,
         "hashOperacao": base_hash + variacao,
-        "competenciaExclusao": 202601,
+        "competenciaExclusao": 202600 + (variacao % 12) + 1,
     }
