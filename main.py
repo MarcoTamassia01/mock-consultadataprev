@@ -245,6 +245,12 @@ def get_emprestimo_trabalhador(
         "96063137": {"codigo": 7, "descricao": "SUSPENSO"},
         "1379": {"codigo": 15, "descricao": "DEMITIDO"},
         "1381": {"codigo": 7, "descricao": "AFASTADO"},
+        "95592477": {"codigo": 2, "descricao": "EXCLUIDO"},
+        "95592825": {"codigo": 2, "descricao": "EXCLUIDO"},
+        "95593170": {"codigo": 2, "descricao": "EXCLUIDO"},
+        "95594935": {"codigo": 2, "descricao": "EXCLUIDO"},
+        "95607389": {"codigo": 2, "descricao": "EXCLUIDO"},
+        "98960490": {"codigo": 2, "descricao": "EXCLUIDO"},
     }
 
     # Também preserva contratos cadastrados apenas com situação específica.
