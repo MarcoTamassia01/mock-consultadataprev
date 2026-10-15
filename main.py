@@ -154,7 +154,10 @@ def get_pagamentos(
     }
 
 
-@app.get("/v1/emprestimos/emprestimo-trabalhador")
+@app.get(
+    "/v1/emprestimos/emprestimo-trabalhador",
+    responses={404: {"description": "Empréstimo inexistente"}},
+)
 def get_emprestimo_trabalhador(
     numeroContrato: str = Query(..., min_length=1),
 ):
@@ -207,12 +210,13 @@ def get_emprestimo_trabalhador(
         "88": _mock_for_contrato("88"),
         "1379": _mock_for_contrato("1379"),
         "1381": _mock_for_contrato("1381"),
+        "95592477": _mock_for_contrato("95592477"),
+        "95592825": _mock_for_contrato("95592825"),
+        "95593170": _mock_for_contrato("95593170"),
+        "95594935": _mock_for_contrato("95594935"),
+        "95607389": _mock_for_contrato("95607389"),
+        "98960490": _mock_for_contrato("98960490"),
     }
-
-    dados = mocks_por_contrato.get(contrato, _mock_for_contrato(contrato))
-    cpf = dados["cpf"]
-    matricula = dados["matricula"]
-    cnpj = dados["numeroInscricaoEmpregador"]
 
     situacao_por_contrato = {
         "3697": {"codigo": 7, "descricao": "Suspenso "},
@@ -242,6 +246,18 @@ def get_emprestimo_trabalhador(
         "1379": {"codigo": 15, "descricao": "DEMITIDO"},
         "1381": {"codigo": 7, "descricao": "AFASTADO"},
     }
+
+    # Também preserva contratos cadastrados apenas com situação específica.
+    if contrato not in mocks_por_contrato and contrato not in situacao_por_contrato:
+        raise HTTPException(status_code=404, detail="Empréstimo inexistente")
+
+    dados = mocks_por_contrato.get(contrato)
+    if dados is None:
+        dados = _mock_for_contrato(contrato)
+    cpf = dados["cpf"]
+    matricula = dados["matricula"]
+    cnpj = dados["numeroInscricaoEmpregador"]
+
     situacao_emprestimo = situacao_por_contrato.get(
         contrato, {"codigo": 0, "descricao": "Ativo"}
     )
