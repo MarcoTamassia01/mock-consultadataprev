@@ -3,6 +3,8 @@ MENSAGENS_EXCLUSAO = {
     "HY": "Empréstimo inexistente para operação de manutenção indicada",
     "TA": "Incompatibilidade crítica entre CPF, matrícula e empregador",
     "HZ": "Não é possível realizar operação com o empréstimo nesta situacao",
+    "404": "Tentativa de excluir/cancelar contrato que já foi cancelado ou não localizado.",
+    "500": "Erro interno do servidor.",
 }
 
 # Valores fixos do exemplo fornecido; competência no formato MMAAAA.
@@ -20,8 +22,8 @@ CENARIOS_EXCLUSAO_POR_CONTRATO = {
     "137": "HY",
     "142": "HZ",
     "132": "HZ",
-    "133": "BF",
-    "135": "BF",
+    "133": "HTTP_404",
+    "135": "HTTP_500",
     "136": "BF",
     "141": "BF",
     "149": "BF",

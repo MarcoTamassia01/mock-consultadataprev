@@ -58,6 +58,16 @@ class ExcluirConsignadoErroResponse(BaseModel):
     numeroContrato: str | None = None
 
 
+class ExcluirConsignadoNaoEncontradoResponse(BaseModel):
+    code: str
+    error: str
+    message: str
+
+
+class ContratoNaoCadastradoResponse(BaseModel):
+    detail: str
+
+
 class AnteciparParcelaRequest(BaseModel):
     codigoSolicitante: int
     numeroContrato: str
@@ -359,14 +369,34 @@ def get_emprestimo_trabalhador(
     "/v1/emprestimos/excluir-consignado-trabalhador",
     response_model=ExcluirConsignadoResponse | ExcluirConsignadoNuloResponse,
     responses={
-        404: {"description": "Empréstimo inexistente"},
+        404: {
+            "description": "Contrato cancelado, não localizado ou fora do cadastro",
+            "model": ExcluirConsignadoNaoEncontradoResponse | ContratoNaoCadastradoResponse,
+        },
         412: {"model": ExcluirConsignadoErroResponse},
+        500: {"model": ExcluirConsignadoErroResponse},
     },
 )
 def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)):
     contrato = str(payload.numeroContrato).strip()
 
     cenario = CENARIOS_EXCLUSAO_POR_CONTRATO.get(contrato)
+    if cenario == "HTTP_404":
+        return JSONResponse(
+            status_code=404,
+            content={
+                "code": "404",
+                "error": "Not Found",
+                "message": MENSAGENS_EXCLUSAO["404"],
+            },
+        )
+
+    if cenario == "HTTP_500":
+        erro = ExcluirConsignadoErroResponse(
+            erros=[ErroExclusao(codigo="500", mensagem=MENSAGENS_EXCLUSAO["500"])],
+        )
+        return JSONResponse(status_code=500, content=erro.model_dump(exclude_none=True))
+
     if cenario == "SUCESSO_NULO":
         return {
             "resultado": True,

@@ -15,13 +15,13 @@ validados. A operação não altera o estado do empréstimo.
 | `125`, `129` | 412 | TA — Incompatibilidade crítica entre CPF, matrícula e empregador |
 | `134`, `137` | 412 | HY — Empréstimo inexistente para operação de manutenção indicada |
 | `142`, `132` | 412 | HZ — Não é possível realizar operação com o empréstimo nesta situacao |
-| Demais 56 contratos abaixo | 200 | BF — Exclusão efetuada com sucesso |
+| `133` | 404 | Contrato já cancelado ou não localizado, com `code`, `error` e `message` |
+| `135` | 500 | Erro interno genérico no formato `erros` |
+| Demais 54 contratos abaixo | 200 | BF — Exclusão efetuada com sucesso |
 
 Contratos com sucesso BF:
 
 ```text
-133
-135
 136
 141
 149
@@ -93,7 +93,7 @@ Troque somente `numeroContrato` para selecionar outro cenário:
   "cpfTrabalhador": 12345678901,
   "matricula": "MOCK",
   "motivoExclusao": 1,
-  "numeroContrato": "133"
+  "numeroContrato": "136"
 }
 ```
 
@@ -103,7 +103,7 @@ Troque somente `numeroContrato` para selecionar outro cenário:
 {
   "codigoSucesso": "BF",
   "mensagem": "Exclusão efetuada com sucesso",
-  "numeroContrato": "133",
+  "numeroContrato": "136",
   "hashOperacao": 71295845,
   "competenciaExclusao": 102026
 }
@@ -175,8 +175,38 @@ explicitamente no JSON.
 As mensagens seguem o catálogo fornecido. TA não inclui `numeroContrato`;
 HY e HZ incluem o contrato recebido. Todos os três erros de cenário usam HTTP 412.
 
+## HTTP 404 — contrato 133
+
+```json
+{
+  "code": "404",
+  "error": "Not Found",
+  "message": "Tentativa de excluir/cancelar contrato que já foi cancelado ou não localizado."
+}
+```
+
+Este corpo é específico do contrato `133`. Contratos fora do cadastro continuam
+com o corpo HTTP 404 `{"detail": "Empréstimo inexistente"}`.
+
+## HTTP 500 — contrato 135
+
+```json
+{
+  "erros": [
+    {
+      "codigo": "500",
+      "mensagem": "Erro interno do servidor."
+    }
+  ]
+}
+```
+
+É uma resposta de erro simulada e fixa para o contrato `135`, no mesmo formato
+`erros` dos cenários existentes.
+
 ## Configuração
 
 Os contratos, códigos, mensagens e valores fixos dos novos cenários estão em
 `constants/exclusao_constants.py`. A rota e os modelos de resposta estão em
-`main.py`. O Swagger (`/docs`) descreve os dois formatos de HTTP 200 e o HTTP 412.
+`main.py`. O Swagger (`/docs`) descreve os dois formatos de HTTP 200, as duas
+variantes de HTTP 404 e os erros HTTP 412 e HTTP 500.
