@@ -5,6 +5,12 @@ from constants.antecipacao_constants import (
     CODIGOS_ANTECIPACAO_POR_CONTRATO,
     MENSAGENS_ANTECIPACAO,
 )
+from constants.exclusao_constants import (
+    CENARIOS_EXCLUSAO_POR_CONTRATO,
+    COMPETENCIA_EXCLUSAO,
+    HASH_OPERACAO_EXCLUSAO,
+    MENSAGENS_EXCLUSAO,
+)
 from constants.utils_constants import QUANTIDADE_POR_PAGINA
 from utils.carregar_dados import carregar_dados_csv
 from utils.conversor_dados import to_int, to_float
@@ -30,6 +36,26 @@ class ExcluirConsignadoResponse(BaseModel):
     numeroContrato: str
     hashOperacao: int
     competenciaExclusao: int
+
+
+class ExcluirConsignadoNuloResponse(BaseModel):
+    resultado: bool
+    mensagem: str
+    contrato: str
+    codigoSucesso: None
+    numeroContrato: None
+    competenciaExclusao: None
+    hashOperacao: None
+
+
+class ErroExclusao(BaseModel):
+    codigo: str
+    mensagem: str
+
+
+class ExcluirConsignadoErroResponse(BaseModel):
+    erros: list[ErroExclusao]
+    numeroContrato: str | None = None
 
 
 class AnteciparParcelaRequest(BaseModel):
@@ -331,11 +357,42 @@ def get_emprestimo_trabalhador(
 
 @app.put(
     "/v1/emprestimos/excluir-consignado-trabalhador",
-    response_model=ExcluirConsignadoResponse,
-    responses={404: {"description": "Empréstimo inexistente"}},
+    response_model=ExcluirConsignadoResponse | ExcluirConsignadoNuloResponse,
+    responses={
+        404: {"description": "Empréstimo inexistente"},
+        412: {"model": ExcluirConsignadoErroResponse},
+    },
 )
 def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)):
     contrato = str(payload.numeroContrato).strip()
+
+    cenario = CENARIOS_EXCLUSAO_POR_CONTRATO.get(contrato)
+    if cenario == "SUCESSO_NULO":
+        return {
+            "resultado": True,
+            "mensagem": "Consignado excluído com sucesso na DataPrev",
+            "contrato": contrato,
+            "codigoSucesso": None,
+            "numeroContrato": None,
+            "competenciaExclusao": None,
+            "hashOperacao": None,
+        }
+
+    if cenario == "BF":
+        return {
+            "codigoSucesso": "BF",
+            "mensagem": MENSAGENS_EXCLUSAO["BF"],
+            "numeroContrato": contrato,
+            "hashOperacao": HASH_OPERACAO_EXCLUSAO,
+            "competenciaExclusao": COMPETENCIA_EXCLUSAO,
+        }
+
+    if cenario is not None:
+        erro = ExcluirConsignadoErroResponse(
+            erros=[ErroExclusao(codigo=cenario, mensagem=MENSAGENS_EXCLUSAO[cenario])],
+            numeroContrato=contrato if cenario in ("HY", "HZ") else None,
+        )
+        return JSONResponse(status_code=412, content=erro.model_dump(exclude_none=True))
 
     # Mocks "diferentes" por contrato (mantendo o mesmo shape do response)
     contratos_mock = [

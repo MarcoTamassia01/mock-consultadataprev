@@ -35,3 +35,20 @@ Accept: application/json
 }
 
 ###
+
+# Exclusão: 133 = 200/BF; 124 ou 130 = 200 com nulos;
+# 125 ou 129 = 412/TA; 134 ou 137 = 412/HY; 142 ou 132 = 412/HZ.
+# Consulte MOCK_EXCLUSAO.md para a lista completa e os corpos de resposta.
+PUT http://127.0.0.1:8000/v1/emprestimos/excluir-consignado-trabalhador
+Content-Type: application/json
+Accept: application/json
+
+{
+  "numeroInscricaoEmpregador": "12345678000199",
+  "cpfTrabalhador": 12345678901,
+  "matricula": "MOCK",
+  "motivoExclusao": 1,
+  "numeroContrato": "133"
+}
+
+###
