@@ -2,7 +2,7 @@
 
 Rota: `PUT /v1/emprestimos/excluir-consignado-trabalhador`.
 
-Os cenários abaixo atendem aos 64 contratos distintos da lista recebida. Cada contrato
+Os cenários abaixo atendem aos 76 contratos distintos da lista recebida. Cada contrato
 tem um retorno fixo; repetir uma chamada não muda o resultado. O cenário depende
 somente de `numeroContrato`, mas os demais campos obrigatórios continuam sendo
 validados. A operação não altera o estado do empréstimo.
@@ -12,12 +12,12 @@ validados. A operação não altera o estado do empréstimo.
 | Contratos | HTTP | Cenário |
 | --- | --- | --- |
 | `124`, `130` | 200 | Resultado verdadeiro com quatro campos de exclusão nulos |
-| `125`, `129` | 412 | TA — Incompatibilidade crítica entre CPF, matrícula e empregador |
-| `134`, `137` | 412 | HY — Empréstimo inexistente para operação de manutenção indicada |
-| `142`, `132` | 412 | HZ — Não é possível realizar operação com o empréstimo nesta situacao |
-| `133` | 404 | Contrato já cancelado ou não localizado, com `code`, `error` e `message` |
+| `125`, `129`, `1000000067` | 412 | TA — Incompatibilidade crítica entre CPF, matrícula e empregador |
+| `134`, `137`, `1000000069` | 412 | HY — Empréstimo inexistente para operação de manutenção indicada |
+| `142`, `132`, `1000000070` | 412 | HZ — Não é possível realizar operação com o empréstimo nesta situacao |
+| `133`, `6081` | 404 | Contrato já cancelado ou não localizado, com `code`, `error` e `message` |
 | `135` | 500 | Erro interno genérico no formato `erros` |
-| Demais 54 contratos abaixo | 200 | BF — Exclusão efetuada com sucesso |
+| Demais 62 contratos abaixo | 200 | BF — Exclusão efetuada com sucesso |
 
 Contratos com sucesso BF:
 
@@ -76,6 +76,14 @@ Contratos com sucesso BF:
 900036
 50004
 50005
+1000000068
+100019
+100017
+100022
+100020
+100018
+6086
+6091
 ```
 
 Os contratos cadastrados anteriormente continuam com os retornos D12/D13/D14.
@@ -175,7 +183,7 @@ explicitamente no JSON.
 As mensagens seguem o catálogo fornecido. TA não inclui `numeroContrato`;
 HY e HZ incluem o contrato recebido. Todos os três erros de cenário usam HTTP 412.
 
-## HTTP 404 — contrato 133
+## HTTP 404 — contratos 133 e 6081
 
 ```json
 {
@@ -185,7 +193,7 @@ HY e HZ incluem o contrato recebido. Todos os três erros de cenário usam HTTP 
 }
 ```
 
-Este corpo é específico do contrato `133`. Contratos fora do cadastro continuam
+Este corpo é específico dos contratos `133` e `6081`. Contratos fora do cadastro continuam
 com o corpo HTTP 404 `{"detail": "Empréstimo inexistente"}`.
 
 ## HTTP 500 — contrato 135
@@ -202,7 +210,7 @@ com o corpo HTTP 404 `{"detail": "Empréstimo inexistente"}`.
 ```
 
 É uma resposta de erro simulada e fixa para o contrato `135`, no mesmo formato
-`erros` dos cenários existentes.
+`erros` dos cenários existentes. Ele é o único contrato configurado para HTTP 500.
 
 ## Configuração
 
