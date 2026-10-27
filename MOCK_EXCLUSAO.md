@@ -2,12 +2,13 @@
 
 Rota: `PUT /v1/emprestimos/excluir-consignado-trabalhador`.
 
-Os cenários abaixo atendem aos 76 contratos distintos da lista recebida. Cada contrato
+O lote inicial contém 76 contratos distintos. O lote da planilha acrescenta outros
+30 contratos, descritos na seção específica abaixo. Cada contrato
 tem um retorno fixo; repetir uma chamada não muda o resultado. O cenário depende
 somente de `numeroContrato`, mas os demais campos obrigatórios continuam sendo
 validados. A operação não altera o estado do empréstimo.
 
-## Distribuição
+## Distribuição do lote inicial (76 contratos)
 
 | Contratos | HTTP | Cenário |
 | --- | --- | --- |
@@ -183,7 +184,7 @@ explicitamente no JSON.
 As mensagens seguem o catálogo fornecido. TA não inclui `numeroContrato`;
 HY e HZ incluem o contrato recebido. Todos os três erros de cenário usam HTTP 412.
 
-## HTTP 404 — contratos 133 e 6081
+## HTTP 404 — contratos 133, 6081, 837 e 839
 
 ```json
 {
@@ -193,10 +194,10 @@ HY e HZ incluem o contrato recebido. Todos os três erros de cenário usam HTTP 
 }
 ```
 
-Este corpo é específico dos contratos `133` e `6081`. Contratos fora do cadastro continuam
+Este corpo é específico dos contratos `133`, `6081`, `837` e `839`. Contratos fora do cadastro continuam
 com o corpo HTTP 404 `{"detail": "Empréstimo inexistente"}`.
 
-## HTTP 500 — contrato 135
+## HTTP 500 — contratos 135, 843 e 841
 
 ```json
 {
@@ -209,8 +210,61 @@ com o corpo HTTP 404 `{"detail": "Empréstimo inexistente"}`.
 }
 ```
 
-É uma resposta de erro simulada e fixa para o contrato `135`, no mesmo formato
-`erros` dos cenários existentes. Ele é o único contrato configurado para HTTP 500.
+É uma resposta de erro simulada e fixa, no mesmo formato `erros` dos cenários
+existentes. O contrato `135` foi preservado; o lote da planilha acrescenta os
+contratos `843` e `841` para os dois novos exemplos de HTTP 500.
+
+## Lote da planilha (30 contratos)
+
+Fonte: coluna `OPERACION` de `MASSA-DADOS-EXCLUIR-DATAPREV-V.xlsx`.
+Foram selecionados 15 números da aba `CANCELADOS` (`D9:D23`) e 15 da aba
+`LIQUIDADOS` (`D2:D16`), todos distintos e sem alterar contratos já cadastrados.
+A planilha foi apenas lida; as situações abaixo são cenários simulados do mock.
+
+| Contratos | HTTP | Cenário |
+| --- | --- | --- |
+| 16 contratos listados abaixo | 200 | BF — Exclusão efetuada com sucesso |
+| `801`, `804` | 200 | Resultado verdadeiro com quatro campos nulos |
+| `813`, `822` | 412 | TA |
+| `823`, `825` | 412 | HY |
+| `828`, `829` | 412 | HZ |
+| `837`, `839` | 404 | Personalizado: `code`, `error`, `message` |
+| `840`, `842` | 404 | Padrão simulado: `{"detail": "Empréstimo inexistente"}` |
+| `843`, `841` | 500 | Erro interno do servidor, no formato `erros` |
+
+Contratos do lote com sucesso BF:
+
+```text
+92621663
+92622099
+99409837
+99410829
+99411547
+99450977
+99452666
+93848464
+93850121
+93850345
+92564449
+92564922
+99450588
+99451210
+99451967
+256
+```
+
+São 18 respostas HTTP 200 (16 BF e 2 com nulos) e 12 respostas de erro.
+Os contratos `840` e `842` estão cadastrados especificamente para simular o corpo
+do 404 padrão; os demais contratos desconhecidos mantêm o comportamento anterior.
+
+HTTP 422 é uma validação da requisição e não um cenário escolhido pelo contrato.
+Para testar dois exemplos usando os mesmos 30 números:
+
+- Envie `92621663` sem o campo obrigatório `matricula`.
+- Envie `92622099` com `cpfTrabalhador` igual a `"INVALIDO"`.
+
+Com o body válido, esses dois contratos continuam retornando HTTP 200 / BF.
+As duas requisições inválidas estão prontas em `test_main.http`.
 
 ## Configuração
 

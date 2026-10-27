@@ -381,6 +381,9 @@ def excluir_consignado_trabalhador(payload: ExcluirConsignadoRequest = Body(...)
     contrato = str(payload.numeroContrato).strip()
 
     cenario = CENARIOS_EXCLUSAO_POR_CONTRATO.get(contrato)
+    if cenario == "HTTP_404_PADRAO":
+        raise HTTPException(status_code=404, detail="Empréstimo inexistente")
+
     if cenario == "HTTP_404":
         return JSONResponse(
             status_code=404,

@@ -53,3 +53,49 @@ Accept: application/json
 }
 
 ###
+
+# Lote da planilha: 92621663 = 200/BF; 801 e 804 = 200 com nulos;
+# 813/822 = 412/TA; 823/825 = 412/HY; 828/829 = 412/HZ;
+# 837/839 = 404 personalizado; 840/842 = 404 padrão; 843/841 = 500.
+PUT http://127.0.0.1:8000/v1/emprestimos/excluir-consignado-trabalhador
+Content-Type: application/json
+Accept: application/json
+
+{
+  "numeroInscricaoEmpregador": "12345678000199",
+  "cpfTrabalhador": 12345678901,
+  "matricula": "MOCK",
+  "motivoExclusao": 1,
+  "numeroContrato": "92621663"
+}
+
+###
+
+# HTTP 422: falta o campo obrigatório matricula.
+PUT http://127.0.0.1:8000/v1/emprestimos/excluir-consignado-trabalhador
+Content-Type: application/json
+Accept: application/json
+
+{
+  "numeroInscricaoEmpregador": "12345678000199",
+  "cpfTrabalhador": 12345678901,
+  "motivoExclusao": 1,
+  "numeroContrato": "92621663"
+}
+
+###
+
+# HTTP 422: cpfTrabalhador com texto que não pode ser convertido em inteiro.
+PUT http://127.0.0.1:8000/v1/emprestimos/excluir-consignado-trabalhador
+Content-Type: application/json
+Accept: application/json
+
+{
+  "numeroInscricaoEmpregador": "12345678000199",
+  "cpfTrabalhador": "INVALIDO",
+  "matricula": "MOCK",
+  "motivoExclusao": 1,
+  "numeroContrato": "92622099"
+}
+
+###
