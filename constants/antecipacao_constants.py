@@ -18,11 +18,27 @@ MENSAGENS_ANTECIPACAO = {
 
 # Contratos repetidos na lista de entrada compartilham o mesmo cenário.
 CODIGOS_ANTECIPACAO_POR_CONTRATO = {
+    "6": "BD",
+    "17": "BD",
+    "18": "BD",
+    "39": "BD",
+    "51": "BD",
+    "94": "BD",
+    "102": "BD",
+    "104": "BD",
+    "6004": "BD",
+    "6049": "BD",
+    "6051": "BD",
+    "6097": "BD",
     "6420": "UC",
+    "10055": "BD",
+    "50015": "BD",
     "50017": "BD",
+    "50019": "BD",
     "100003": "BD",
     "100013": "BD",
     "100015": "BD",
+    "100016": "BD",
     "100017": "BD",
     "100019": "BD",
     "100020": "BD",
@@ -33,4 +49,5 @@ CODIGOS_ANTECIPACAO_POR_CONTRATO = {
     "100114": "BD",
     "100141": "BD",
     "100145": "BD",
+    "1000000052": "BD",
 }
